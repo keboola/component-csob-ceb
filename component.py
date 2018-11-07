@@ -33,7 +33,7 @@ APP_VERSION = '0.0.1'
 
 class Component(KBCEnvHandler):
 
-    def __init__(self, debug=True):
+    def __init__(self, debug=False):
         KBCEnvHandler.__init__(self, MANDATORY_PARS)
         # override debug from config
         if(debug or self.cfg_params.get('debug')):
