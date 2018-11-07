@@ -9,7 +9,7 @@ import os
 
 DEFAULT_TZ = 'Europe/Prague'
 
-DEFAULT_CERT_PATH = './cert/cag.pem'
+DEFAULT_CERT_PATH = '/cert/cag.pem'
 DEFAULT_FORMAT = 'TXT'
 # default interval to wait between requests (s)
 DEFAULT_RATELIMIT_INTERVAL = 60
@@ -28,7 +28,7 @@ PAR_FILE_TYPES = 'filetypes'
 
 MANDATORY_PARS = [PAR_CERT, PAR_CONTRACTNR]
 
-APP_VERSION = '0.0.1'
+APP_VERSION = '0.0.2'
 
 
 class Component(KBCEnvHandler):
@@ -68,10 +68,11 @@ class Component(KBCEnvHandler):
         else:
             since_date = None
 
+        cert_path = os.path.join(self.data_path,DEFAULT_CERT_PATH)
         # write cert to file
-        if not os.path.exists(os.path.dirname(DEFAULT_CERT_PATH)):
-            os.makedirs(os.path.dirname(DEFAULT_CERT_PATH))
-        with open(DEFAULT_CERT_PATH, "w+", encoding="utf-8") as cert_file:
+        if not os.path.exists(os.path.dirname(cert_path)):
+            os.makedirs(os.path.dirname(cert_path))
+        with open(cert_path, "w+", encoding="utf-8") as cert_file:
             cert_file.write(params[PAR_CERT])
 
         service_url = Client.TEST_SERVICE_URL if params.get(
@@ -104,6 +105,8 @@ class Component(KBCEnvHandler):
             self.create_sliced_tables(
                 folder_name=folder, pkey=res_folders[folder], incremental=True, src_delimiter=",", src_enclosure='"')
 
+        # delete cert
+        os.remove(cert_path)
         logging.info('Extraction finished!')
 
 
