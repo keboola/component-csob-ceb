@@ -1,0 +1,36 @@
+{
+	"type": "object",
+	"title": "CEB Connector configuration",
+	"required": [
+		"#cert",
+		"contract_nr",
+		"period_from",
+		"relative_period"
+	],
+	"properties": {
+		"#cert": {
+			"type": "string",
+			"title": "CEB certificate",
+			"format": "password",
+			"description":"Client certificate enabled in CEB portal. It has to be in pem format and contain both private and public key. Json escaped",
+			"propertyOrder": 200
+		},
+		"contract_nr": {
+			"type": "string",
+			"title": "CSOB contract number",
+			"propertyOrder": 300
+		},
+		"period_from": {
+			"type": "string",
+			"format": "date",
+			"title": "Period from date",
+			"propertyOrder": 600
+		},
+		"relative_period": {
+			"type": "string",
+			"title": "Relative period from now (utc)",
+			"description": "Relative period in format: '5 hours ago', 'yesterday','3 days ago', '4 months ago', '2 years ago', 'today'. Overrides `from` parameter.",
+			"propertyOrder": 710
+		}
+	}
+}
