@@ -168,9 +168,9 @@ class CEB_txt_parser:
 
             stats_res = {'file_path': stats_out.name,
                          'id': SEPA_STATS_PK,
-                         'type': KEY_VYPIS + 'stats'}
+                         'type': KEY_VYPIS.lower() + '-stats'}
             data_res = {'file_path': data_output_file.name,
                         'id': SEPA_DATA_PK,
-                        'type': KEY_VYPIS + 'data'}
+                        'type': KEY_VYPIS.lower() + '-data'}
 
             return [stats_res, data_res]
