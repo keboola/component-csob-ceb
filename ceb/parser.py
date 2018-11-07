@@ -105,12 +105,12 @@ class CEB_txt_parser:
         file_name = os.path.basename(file_path)
 
         stats_output_path = os.path.join(
-            output_path, KEY_VYPIS + 'stats', file_name + '-stats.csv')
+            output_path, KEY_VYPIS.lower() + '-stats', file_name + '-stats.csv')
         if not os.path.exists(os.path.dirname(stats_output_path)):
             os.makedirs(os.path.dirname(stats_output_path))
 
         data_output_path = os.path.join(
-            output_path, KEY_VYPIS + 'data', file_name + '-data.csv')
+            output_path, KEY_VYPIS.lower() + '-data', file_name + '-data.csv')
         if not os.path.exists(os.path.dirname(data_output_path)):
             os.makedirs(os.path.dirname(data_output_path))
 
