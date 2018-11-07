@@ -1,9 +1,9 @@
-#==============================================================================
+# ==============================================================================
 # KBC Env handler
-#==============================================================================
+# ==============================================================================
 
 
-#============================ Import libraries ================================
+# ============================ Import libraries ==========================
 import logging
 import json
 import os
@@ -28,7 +28,7 @@ class KBCEnvHandler:
             data_path = os.environ.get('KBC_DATADIR')
 
         self.kbc_config_id = os.environ.get('KBC_CONFIGID')
-        
+
         self.data_path = data_path
         self.configuration = docker.Config(data_path)
         self.cfg_params = self.configuration.get_parameters()
@@ -37,7 +37,7 @@ class KBCEnvHandler:
 
         self._mandatory_params = mandatory_params
 
-#==============================================================================
+# ==============================================================================
 
     def validateConfig(self):
         '''
@@ -49,7 +49,7 @@ class KBCEnvHandler:
         missing_fields = []
         for field in self._mandatory_params:
             if isinstance(field, list):
-                missing_fields.extend(self._validate_par_group(field))            
+                missing_fields.extend(self._validate_par_group(field))
             elif not parameters.get(field):
                 missing_fields.append(field)
 
@@ -61,13 +61,13 @@ class KBCEnvHandler:
         missing_fields = []
         is_present = False
         for par in par_group:
-            if isinstance(par,list):
+            if isinstance(par, list):
                 missing_subset = self._get_par_missing_fields(par)
                 missing_fields.extend(missing_subset)
                 if not missing_subset:
                     is_present = True
-                    
-            elif self.cfg_params.get(par):                
+
+            elif self.cfg_params.get(par):
                 is_present = True
             else:
                 missing_fields.append(par)
@@ -75,37 +75,33 @@ class KBCEnvHandler:
             return missing_fields
         else:
             return []
-    
+
     def _get_par_missing_fields(self, mand_params):
         parameters = self.cfg_params
         missing_fields = []
         for field in mand_params:
-           if not parameters.get(field):
+            if not parameters.get(field):
                 missing_fields.append(field)
         return missing_fields
-    
-    
-    
-    
+
     def get_input_table_by_name(self, table_name):
         tables = self.configuration.get_input_tables()
         table = [t for t in tables if t.get('destination') == table_name]
         if not table:
-            raise ValueError('Specified input mapping [{}] does not exist'.format(table_name))
+            raise ValueError(
+                'Specified input mapping [{}] does not exist'.format(table_name))
         return table[0]
 
 
-#================================= Logging ====================================
+# ================================= Logging ==============================
 
-    def set_default_logger(self, log_level = 'INFO'):
-        root = logging.getLogger()
-
+    def set_default_logger(self, log_level='INFO'):  # noqa: E301
 
         hdl = logging.StreamHandler(sys.stdout)
         logging.basicConfig(
             level=log_level,
             format='%(levelname)s - %(message)s',
-            handlers = [hdl])
+            handlers=[hdl])
 
         logger = logging.getLogger()
         return logger
@@ -124,21 +120,23 @@ class KBCEnvHandler:
             raise ValueError(
                 "State file state.json unable to read "
             )
-            
 
     def write_state_file(self, state_dict):
         if not isinstance(state_dict, dict):
             raise TypeError('Dictionary expected as a state file datatype!')
 
-        with open(os.path.join(self.configuration.data_dir,'out','state.json'), 'w+') as state_file:
+        with open(os.path.join(self.configuration.data_dir, 'out', 'state.json'), 'w+') as state_file:
             json.dump(state_dict, state_file)
 
-    def create_sliced_tables(self, folder_name, pkey=None, incremental=False, src_delimiter=DEFAULT_DEL, src_enclosure=DEFAULT_ENCLOSURE, dest_bucket=None):
+    def create_sliced_tables(self, folder_name, pkey=None, incremental=False,
+                             src_delimiter=DEFAULT_DEL, src_enclosure=DEFAULT_ENCLOSURE, dest_bucket=None):
         """
         Creates prepares sliced tables from all files in DATA_PATH/out/tables/{folder_name} - i.e. removes all headers
         and creates single manifest file based on provided parameters.
 
-        folder_name -- folder name in DATA_PATH directory that contains files for slices, the same name will be used as table name
+        folder_name -- folder name in DATA_PATH directory that contains files for slices,
+        the same name will be used as table name
+
         src_enclosure -- enclosure of the source file ["]
         src_delimiter -- delimiter of the source file [,]
         dest_bucket -- name of the destination bucket (optional)
@@ -164,7 +162,6 @@ class KBCEnvHandler:
             destination = dest_bucket + '.' + folder_name
         else:
             destination = folder_name
-        
 
         log.info('Creating manifest file..')
         self.configuration.write_table_manifest(
@@ -209,9 +206,7 @@ class KBCEnvHandler:
                     writer.writerow(row)
         os.remove(file)
         return header
-    
-    
-    
+
     def process_results(self, res_files, def_bucket_name, output_bucket):
         for res in res_files:
             dest_bucket = def_bucket_name + str(self.kbc_config_id)
@@ -235,13 +230,13 @@ class KBCEnvHandler:
         for folder in res_sliced_folders:
             self.create_sliced_tables(folder, res_sliced_folders[folder], True)
 
-#==============================================================================
-#== UTIL functions
+# ==============================================================================
+# == UTIL functions
 
-    def get_past_date(self, str_days_ago, to_date = None, tz = pytz.utc):
+    def get_past_date(self, str_days_ago, to_date=None, tz=pytz.utc):
         '''
         Returns date in specified timezone relative to today.
-        
+
         e.g.
         '5 hours ago',
         'yesterday',
@@ -261,7 +256,8 @@ class KBCEnvHandler:
             date = TODAY - relativedelta(days=1)
             return date
         elif splitted[1].lower() in ['hour', 'hours', 'hr', 'hrs', 'h']:
-            date = datetime.datetime.now() - relativedelta(hours=int(splitted[0]))
+            date = datetime.datetime.now() - \
+                relativedelta(hours=int(splitted[0]))
             return date.date()
         elif splitted[1].lower() in ['day', 'days', 'd']:
             date = TODAY - relativedelta(days=int(splitted[0]))
@@ -281,13 +277,13 @@ class KBCEnvHandler:
     def split_dates_to_chunks(self, start_date, end_date, intv, strformat="%m%d%Y"):
         '''
         Splits dates in given period into chunks of specified max size.
-        
+
         Params:
         start_date -- start_period [datetime]
         end_date -- end_period [datetime]
         intv -- max chunk size
         strformat -- dateformat of result periods
-        
+
         Usage example:
         list(split_dates_to_chunks("2018-01-01", "2018-01-04", 2, "%Y-%m-%d"))
 
@@ -295,40 +291,37 @@ class KBCEnvHandler:
                      {start_date: "2018-01-02", "end_date":"2018-01-04"}]
         '''
         return list(self._split_dates_to_chunks_gen(start_date, end_date, intv, strformat))
-    
-    
+
     def _split_dates_to_chunks_gen(self, start_date, end_date, intv, strformat="%m%d%Y"):
         '''
         Splits dates in given period into chunks of specified max size.
-        
+
         Params:
         start_date -- start_period [datetime]
         end_date -- end_period [datetime]
         intv -- max chunk size
         strformat -- dateformat of result periods
-        
+
         Usage example:
         list(split_dates_to_chunks("2018-01-01", "2018-01-04", 2, "%Y-%m-%d"))
 
             returns [{start_date: "2018-01-01", "end_date":"2018-01-02"}
                      {start_date: "2018-01-02", "end_date":"2018-01-04"}]
         '''
-        
+
         nr_days = (end_date - start_date).days
-        
+
         if nr_days <= intv:
             yield {'start_date': start_date.strftime(strformat),
                    'end_date': end_date.strftime(strformat)}
-        elif intv == 0:     
+        elif intv == 0:
             diff = timedelta(days=1)
             for i in range(nr_days):
                 yield {'start_date': (start_date + diff * i).strftime(strformat),
                        'end_date': (start_date + diff * i).strftime(strformat)}
         else:
-            nr_parts = math.ceil(nr_days/intv)       
+            nr_parts = math.ceil(nr_days / intv)
             diff = (end_date - start_date) / nr_parts
             for i in range(nr_parts):
                 yield {'start_date': (start_date + diff * i).strftime(strformat),
                        'end_date': (start_date + diff * (i + 1)).strftime(strformat)}
-
-

@@ -24,7 +24,7 @@ KEY_RELATIVE_PERIOD = 'relative_period'
 DATE_FORMAT = '%Y-%m-%dT%H:%M:%S'
 
 PAR_FILE_TYPES = 'filetypes'
-## [VYPIS, AVIZO, KURZY, IMPPROT]
+# [VYPIS, AVIZO, KURZY, IMPPROT]
 
 MANDATORY_PARS = [PAR_CERT, PAR_CONTRACTNR]
 
@@ -45,7 +45,7 @@ class Component(KBCEnvHandler):
         self.set_default_logger('DEBUG' if debug else 'INFO')
         logging.info('Running version %s', APP_VERSION)
         logging.info('Loading configuration...')
-        
+
         try:
             self.validateConfig()
         except ValueError as e:
@@ -57,7 +57,7 @@ class Component(KBCEnvHandler):
         Main execution code
         '''
         params = self.cfg_params
-        
+
         state_file = self.get_state_file()
         if state_file and state_file.get('prev_run') and params.get('since_last'):
             since_date = state_file.get('prev_run')
@@ -72,29 +72,31 @@ class Component(KBCEnvHandler):
         with open(DEFAULT_CERT_PATH, "w+", encoding="utf-8") as cert_file:
             cert_file.write(params[PAR_CERT])
 
-        service_url = Client.TEST_SERVICE_URL if params.get(PAR_TEST_SRV) else Client.PRODUCTION_SERVICE_URL
+        service_url = Client.TEST_SERVICE_URL if params.get(
+            PAR_TEST_SRV) else Client.PRODUCTION_SERVICE_URL
 
-        ceb_client = Client(params.get(PAR_CONTRACTNR), DEFAULT_CERT_PATH, base_url = service_url, debug=self._debug)
+        ceb_client = Client(params.get(
+            PAR_CONTRACTNR), DEFAULT_CERT_PATH, base_url=service_url, debug=self._debug)
 
         now_dt = datetime.now(pytz.timezone(DEFAULT_TZ))
 
-        #support only vypis
-        file_types = ['VYPIS']#params.get(PAR_FILE_TYPES)
+        # support only vypis
+        file_types = ['VYPIS']  # params.get(PAR_FILE_TYPES)
 
-        res_files = ceb_client.download_all_files(since_date, now_dt, os.path.join(self.data_path,'tmp'), file_types,
-                                                 DEFAULT_FORMAT)
-        
-        
+        res_files = ceb_client.download_all_files(since_date, now_dt, os.path.join(self.data_path, 'tmp'), file_types,
+                                                  DEFAULT_FORMAT)
+
         if not res_files:
             logging.info('No files downloaded!')
-            
+
         # parse results
         res_folders = {}
         for res in res_files:
-            parsed_res = CEB_txt_parser.parse(res['file_path'], self.tables_out_path, res['type'])
-                        
+            parsed_res = CEB_txt_parser.parse(
+                res['file_path'], self.tables_out_path, res['type'])
+
             for f in parsed_res:
-                res_folders[f['type']] = f['id'] 
+                res_folders[f['type']] = f['id']
 
         for folder in res_folders:
             self.create_sliced_tables(

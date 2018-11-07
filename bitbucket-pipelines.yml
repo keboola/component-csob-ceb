@@ -9,7 +9,7 @@ pipelines:
           - docker build . --tag=$APP_IMAGE
           - docker images
           - docker -v
-          - docker run $APP_IMAGE flake8 --config=./code/deployment/flake8.cfg
+          - docker run $APP_IMAGE flake8 /code/ --config=./code/deployment/flake8.cfg
           - echo "Running unit-tests..."
           - docker run $APP_IMAGE python -m unittest discover
 

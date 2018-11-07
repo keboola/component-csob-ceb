@@ -28,8 +28,9 @@ class Client:
     _KEY_FILEDETAIL = 'FileDetail'
     _KEY_TYPE = 'Type'
 
-    def __init__(self, contract_number, cert_path, base_url = PRODUCTION_SERVICE_URL, rate_limit_interval=60, operation_timeout=3600, debug=False):
-        
+    def __init__(self, contract_number, cert_path, base_url=PRODUCTION_SERVICE_URL,
+                 rate_limit_interval=60, operation_timeout=3600, debug=False):
+
         # final variables setup
         self._rate_limit_interval = rate_limit_interval
         self._operation_timeout = operation_timeout
@@ -158,10 +159,10 @@ class Client:
         filter_ = {"FileTypes": file_type_list,
                    "CreatedAfter": created_after,
                    "CreatedBefore": created_before}
-        res = self._try_request(lambda: self.client_service.GetDownloadFileList_v2(ContractNumber=self.contract_number, PrevQueryTimestamp=prev_query_timestamp,
-                                                                                   Filter=filter_), retries=1)
-      #  res = self._try_request(self.client_service.GetDownloadFileList_v2, retries = 1,ContractNumber=123, PrevQueryTimestamp=prev_query_timestamp,
-       #                                                  Filter = filter_  )
+        res = self._try_request(lambda: self.client_service.
+                                GetDownloadFileList_v2(ContractNumber=self.contract_number,
+                                                       PrevQueryTimestamp=prev_query_timestamp,
+                                                       Filter=filter_), retries=1)
 
         file_list = helpers.serialize_object(res)
         return file_list
@@ -179,16 +180,17 @@ class Client:
         file_details = []
         details_dict = file_list.get(self._KEY_FILEDETAIL)
         file_details.extend([detail for detail in details_dict
-                             if detail.get(self._KEY_TYPE) in file_types and detail.get(self._KEY_FILENAME).endswith('.' + format_)])
+                             if detail.get(self._KEY_TYPE) in file_types
+                             and detail.get(self._KEY_FILENAME).endswith('.' + format_)])
         return file_details
 
     def _download_files_by_type(self, files, destination_folder):
         """
-        Downloads files into new directiories in destination_folder based on their type. 
+        Downloads files into new directiories in destination_folder based on their type.
         e.g. destination_folder/VYPIS/vypis.txt
 
         files -- OrderedDictionary object containing FileDetail object from response
-        
+
         returns list of dicts {'file_path':f.name,
                                  'type' : type}
 
@@ -197,22 +199,21 @@ class Client:
         for file in files:
             f = self.download_file(file.get('Url'), os.path.join(
                 destination_folder, file.get(self._KEY_FILENAME).replace(":", "_")))
-            result_files.extend([{'file_path':f.name,
-                                 'type' : file.get(self._KEY_TYPE)}])
+            result_files.extend([{'file_path': f.name,
+                                  'type': file.get(self._KEY_TYPE)}])
 
         return result_files
 
     def download_all_files(self, created_date, until_date, result_folder_path, file_types, format_='TXT'):
         """
-        Download all statement files into result_folder_path/TYPE/FILE_NAME. 
-        
+        Download all statement files into result_folder_path/TYPE/FILE_NAME.
+
         created_date -- files created after
         until_date -- files created before
-        file_types -- ['VYPIS', 'AVIZO' ...] 
-        
+        file_types -- ['VYPIS', 'AVIZO' ...]
+
         Returns list of downloaded files
         """
-        
 
         start = timer()
         continue_ = True
