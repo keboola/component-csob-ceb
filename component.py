@@ -68,7 +68,7 @@ class Component(KBCEnvHandler):
         else:
             since_date = None
 
-        cert_path = os.path.join(self.data_path,DEFAULT_CERT_PATH)
+        cert_path = os.path.join(self.data_path, DEFAULT_CERT_PATH)
         # write cert to file
         if not os.path.exists(os.path.dirname(cert_path)):
             os.makedirs(os.path.dirname(cert_path))
