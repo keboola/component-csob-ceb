@@ -9,7 +9,7 @@ import os
 
 DEFAULT_TZ = 'Europe/Prague'
 
-DEFAULT_CERT_PATH = '/cert/cag.pem'
+DEFAULT_CERT_FILE_NAME = 'cag.pem'
 DEFAULT_FORMAT = 'TXT'
 # default interval to wait between requests (s)
 DEFAULT_RATELIMIT_INTERVAL = 60
@@ -68,7 +68,7 @@ class Component(KBCEnvHandler):
         else:
             since_date = None
 
-        cert_path = os.path.join(self.data_path, DEFAULT_CERT_PATH)
+        cert_path = os.path.join(self.data_path, 'cert', DEFAULT_CERT_FILE_NAME)
         # write cert to file
         if not os.path.exists(os.path.dirname(cert_path)):
             os.makedirs(os.path.dirname(cert_path))
@@ -79,7 +79,7 @@ class Component(KBCEnvHandler):
             PAR_TEST_SRV) else Client.PRODUCTION_SERVICE_URL
 
         ceb_client = Client(params.get(
-            PAR_CONTRACTNR), DEFAULT_CERT_PATH, base_url=service_url, debug=self._debug)
+            PAR_CONTRACTNR), cert_path, base_url=service_url, debug=self._debug)
 
         now_dt = datetime.now(pytz.timezone(DEFAULT_TZ))
 
