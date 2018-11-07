@@ -28,7 +28,7 @@ PAR_FILE_TYPES = 'filetypes'
 
 MANDATORY_PARS = [PAR_CERT, PAR_CONTRACTNR]
 
-APP_VERSION = '0.0.2'
+APP_VERSION = '0.0.3'
 
 
 class Component(KBCEnvHandler):
@@ -68,7 +68,7 @@ class Component(KBCEnvHandler):
         else:
             since_date = None
 
-        cert_path = os.path.join(self.data_path, 'cert', DEFAULT_CERT_FILE_NAME)
+        cert_path = os.path.join(self.data_path, 'crt', DEFAULT_CERT_FILE_NAME)
         # write cert to file
         if not os.path.exists(os.path.dirname(cert_path)):
             os.makedirs(os.path.dirname(cert_path))
