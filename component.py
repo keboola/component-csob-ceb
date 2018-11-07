@@ -69,6 +69,8 @@ class Component(KBCEnvHandler):
             since_date = None
 
         # write cert to file
+        if not os.path.exists(os.path.dirname(DEFAULT_CERT_PATH)):
+            os.makedirs(os.path.dirname(DEFAULT_CERT_PATH))
         with open(DEFAULT_CERT_PATH, "w+", encoding="utf-8") as cert_file:
             cert_file.write(params[PAR_CERT])
 

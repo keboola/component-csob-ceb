@@ -5,7 +5,7 @@ COPY . /code/
 
 RUN pip install -r /code/requirements.txt
 
-WORKDIR /data/
+WORKDIR /code/
 
 
 
