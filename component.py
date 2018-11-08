@@ -28,7 +28,7 @@ PAR_FILE_TYPES = 'filetypes'
 
 MANDATORY_PARS = [PAR_CERT, PAR_CONTRACTNR]
 
-APP_VERSION = '0.0.4'
+APP_VERSION = '0.0.5'
 
 
 class Component(KBCEnvHandler):

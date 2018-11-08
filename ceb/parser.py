@@ -14,7 +14,7 @@ KEY_VYPIS = 'VYPIS'
 
 SEPA_STATS_PK = ['CISLO_UCTU', 'MENA',
                  'CISLO_VYPISU', 'DATUM_START', 'DATUM_END']
-SEPA_DATA_PK = []
+SEPA_DATA_PK = ['STATS_ID', 'DATUM_START', 'DATUM_END', ]
 
 SEPA_STATS_HEADER = ['CISLO_UCTU',
                      'MENA',
@@ -32,7 +32,8 @@ SEPA_STATS_HEADER = ['CISLO_UCTU',
                      'FREKVENCE',
                      'PK']
 
-SEPA_DATA_ADD_COLS = ['STATS_ID', 'DATUM_START', 'DATUM_END']
+SEPA_DATA_ADD_COLS = ['STATS_ID', 'DATUM_START', 'DATUM_END',
+                      'TYP_TRANSAKCE', 'TRACE_ID', ]
 
 SEPA_DATA_HEADER = [
     'TYP_TRANSAKCE',
