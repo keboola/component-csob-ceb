@@ -9,4 +9,4 @@ WORKDIR /code/
 
 
 
-CMD ["python", "-u", "/code/component.py"]
+CMD ["python", "-u", "/code/src/component.py"]
