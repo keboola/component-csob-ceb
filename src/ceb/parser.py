@@ -6,6 +6,7 @@ Created on 6. 11. 2018
 import os
 import csv
 import hashlib
+import logging
 
 KEY_HEADER_ROW = 'HLAVA'
 KEY_DATA_ROW = 'UC_POLOZKA'
@@ -149,16 +150,24 @@ class CEB_txt_parser:
 
                 for row in input_file:
                     values = row.split('|')
-                    if(values[0] == KEY_HEADER_ROW):
+                    if (values[0] == KEY_HEADER_ROW):
                         # skip
                         continue
-                    if(values[0] == KEY_DATA_ROW):
+                    if (values[0] == KEY_DATA_ROW):
                         # clean line (remove first(type) and last(extra sep)
                         # col
                         del values[-1]
                         del values[0]
 
                         # add additional values
+                        if len(values) != len(SEPA_DATA_HEADER):
+                            missing_cols = len(SEPA_DATA_HEADER) - len(values)
+                            logging.error(
+                                'Statement %s contains incorrect number of columns at record %s. %s cols are missing',
+                                file_path, stats_pk, missing_cols)
+                            # HOTFIX: fix values len
+                            values = values + [''] * missing_cols
+
                         values = values + [stats_pk, date_start, date_end]
                         writer.writerow(values)
                     else:
