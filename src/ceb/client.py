@@ -17,7 +17,7 @@ from timeit import default_timer as timer
 
 
 class Client:
-    _CEB_SERVICE_WSDL = '../cebbc-wsdl/CEBBCWS.wsdl'
+    _CEB_SERVICE_WSDL = './cebbc-wsdl/CEBBCWS.wsdl'
 
     PRODUCTION_SERVICE_URL = 'ceb-bc.csob.cz'
     TEST_SERVICE_URL = 'testceb-bc.csob.cz'
