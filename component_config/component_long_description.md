@@ -1,0 +1,1 @@
+Download bank statements from CSOB CEB service. Supports [TXT sepa format](https://www.csob.cz/portal/documents/10710/1927786/format-txt-sepa.pdf) bank statements. These need to be enabled in the CEB UI.
