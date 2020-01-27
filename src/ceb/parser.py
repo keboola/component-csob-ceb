@@ -3,19 +3,22 @@ Created on 6. 11. 2018
 
 @author: esner
 '''
-import os
 import csv
 import hashlib
 import logging
+import os
 
 KEY_HEADER_ROW = 'HLAVA'
 KEY_DATA_ROW = 'UC_POLOZKA'
+KEY_NEUC_DATA_ROW = 'NEUC_POLOZKA'
 
 KEY_VYPIS = 'VYPIS'
 
 SEPA_STATS_PK = ['PK']
 SEPA_DATA_PK = ['STATS_PK', 'DATUM_START', 'DATUM_END', 'TYP_TRANSAKCE', 'TRACE_ID']
+SEPA_NEUC_DATA_PK = ['STATS_PK', 'DATUM_START', 'DATUM_END', 'UROK_SAZBA', 'DATUM_ZMENY']
 
+SEPA_NEUC_DATA_HEADER = ['UROK_SAZBA', 'DATUM_ZMENY']
 SEPA_STATS_HEADER = ['CISLO_UCTU',
                      'MENA',
                      'NAZEV_UCTU',
@@ -114,6 +117,11 @@ class CEB_txt_parser:
         if not os.path.exists(os.path.dirname(data_output_path)):
             os.makedirs(os.path.dirname(data_output_path))
 
+        neuc_data_output_path = os.path.join(
+            output_path, KEY_VYPIS.lower() + '-neuc-data', file_name + '-data.csv')
+        if not os.path.exists(os.path.dirname(neuc_data_output_path)):
+            os.makedirs(os.path.dirname(neuc_data_output_path))
+
         # write stats
         with open(file_path, encoding='windows-1250') as input_file:
             with open(stats_output_path, 'w+', newline='', encoding='utf-8') as stats_out:
@@ -142,11 +150,14 @@ class CEB_txt_parser:
                 writer.writerow(line)
 
             # write data
-            with open(data_output_path, 'w+', newline='', encoding='utf-8') as data_output_file:
+            with open(data_output_path, 'w+', newline='', encoding='utf-8') as data_output_file, open(
+                    neuc_data_output_path, 'w+', newline='', encoding='utf-8') as neuc_data_output_file:
                 writer = csv.writer(data_output_file)
+                neuc_writer = csv.writer(neuc_data_output_file)
                 line = []
                 # write header
                 writer.writerow(SEPA_DATA_HEADER + SEPA_DATA_ADD_COLS)
+                neuc_writer.writerow(SEPA_NEUC_DATA_HEADER + SEPA_DATA_ADD_COLS)
 
                 for row in input_file:
                     values = row.split('|')
@@ -170,6 +181,22 @@ class CEB_txt_parser:
 
                         values = values + [stats_pk, date_start, date_end]
                         writer.writerow(values)
+                    elif values[0] == KEY_NEUC_DATA_ROW:
+                        # clean line (remove first(type) and last(extra sep)
+                        # col
+                        del values[-1]
+                        del values[0]
+                        # add additional values
+                        if len(values) != len(SEPA_NEUC_DATA_HEADER):
+                            missing_cols = len(SEPA_NEUC_DATA_HEADER) - len(values)
+                            logging.error(
+                                'Statement %s contains incorrect number of columns at record %s. %s cols are missing',
+                                file_path, stats_pk, missing_cols)
+                            # HOTFIX: fix values len
+                            values = values + [''] * missing_cols
+
+                        values = values + [stats_pk, date_start, date_end]
+                        neuc_writer.writerow(values)
                     else:
                         raise ValueError(
                             'Unsupported type: {}'.format(values[0]))
@@ -180,5 +207,8 @@ class CEB_txt_parser:
             data_res = {'file_path': data_output_file.name,
                         'id': SEPA_DATA_PK,
                         'type': KEY_VYPIS.lower() + '-data'}
+            neuc_data_res = {'file_path': neuc_data_output_file.name,
+                        'id': SEPA_NEUC_DATA_PK,
+                        'type': KEY_VYPIS.lower() + '-neuc-data'}
 
-            return [stats_res, data_res]
+            return [stats_res, data_res, neuc_data_res]
