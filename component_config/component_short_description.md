@@ -1,0 +1,1 @@
+Download bank statements from CSOB CEB service.
