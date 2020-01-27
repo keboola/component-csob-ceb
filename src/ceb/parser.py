@@ -208,7 +208,7 @@ class CEB_txt_parser:
                         'id': SEPA_DATA_PK,
                         'type': KEY_VYPIS.lower() + '-data'}
             neuc_data_res = {'file_path': neuc_data_output_file.name,
-                        'id': SEPA_NEUC_DATA_PK,
-                        'type': KEY_VYPIS.lower() + '-neuc-data'}
+                             'id': SEPA_NEUC_DATA_PK,
+                             'type': KEY_VYPIS.lower() + '-neuc-data'}
 
             return [stats_res, data_res, neuc_data_res]
