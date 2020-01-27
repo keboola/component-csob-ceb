@@ -1,3 +1,8 @@
 /.pydevproject
 /test.py
 /test.xml
+.idea/
+.project
+venv/
+data/
+

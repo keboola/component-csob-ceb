@@ -1,11 +1,12 @@
-from datetime import datetime
-from kbc.env_handler import KBCEnvHandler
-from ceb.parser import CEB_txt_parser
-from ceb.client import Client
-
 import logging
-import pytz
 import os
+from datetime import datetime
+
+import pytz
+from kbc.env_handler import KBCEnvHandler
+
+from ceb.client import Client
+from ceb.parser import CEB_txt_parser
 
 DEFAULT_TZ = 'Europe/Prague'
 
@@ -20,6 +21,7 @@ PAR_CERT = '#cert'
 PAR_TEST_SRV = 'test_service'
 PAR_FORMAT = 'format'
 KEY_RELATIVE_PERIOD = 'relative_period'
+KEY_DEBUG = "debug"
 
 DATE_FORMAT = '%Y-%m-%dT%H:%M:%S'
 
@@ -34,22 +36,20 @@ APP_VERSION = '0.0.7'
 class Component(KBCEnvHandler):
 
     def __init__(self, debug=False):
-        KBCEnvHandler.__init__(self, MANDATORY_PARS)
+        KBCEnvHandler.__init__(self, MANDATORY_PARS, log_level=logging.DEBUG if debug else logging.INFO)
         # override debug from config
-        if(debug or self.cfg_params.get('debug')):
+        if self.cfg_params.get(KEY_DEBUG):
             debug = True
-            self._debug = True
-        else:
-            self._debug = False
-
-        self.set_default_logger('DEBUG' if debug else 'INFO')
+        if debug:
+            logging.getLogger().setLevel(logging.DEBUG)
         logging.info('Running version %s', APP_VERSION)
         logging.info('Loading configuration...')
+        self._debug = debug
 
         try:
-            self.validateConfig()
+            self.validate_config(MANDATORY_PARS)
         except ValueError as e:
-            logging.error(e)
+            logging.exception(e)
             exit(1)
 
     def run(self, debug=True):
@@ -62,7 +62,8 @@ class Component(KBCEnvHandler):
         if state_file and state_file.get('prev_run') and params.get('since_last'):
             since_date = state_file.get('prev_run')
         elif self.cfg_params.get(KEY_RELATIVE_PERIOD):
-            since_date = super().get_past_date(self.cfg_params.get(KEY_RELATIVE_PERIOD))
+            since_date, to_dt = self.get_date_period_converted(params.get(KEY_RELATIVE_PERIOD),
+                                                               params.get(KEY_RELATIVE_PERIOD))
         elif params.get(PAR_SINCE_DATE):
             since_date = datetime.strptime(params[PAR_SINCE_DATE], '%Y-%m-%d')
         else:
