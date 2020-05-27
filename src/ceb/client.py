@@ -7,6 +7,7 @@ Created on 28. 9. 2018
 import logging.config
 import os
 import time
+from os.path import dirname
 from timeit import default_timer as timer
 
 import requests
@@ -26,7 +27,8 @@ class ClientException(Exception):
 
 class Client:
     MAX_RETRIES = 10
-    _CEB_SERVICE_WSDL = '../cebbc-wsdl/CEBBCWS.wsdl'
+    _CEB_SERVICE_WSDL = os.path.join(dirname(dirname(dirname(os.path.realpath(__file__)))), 'cebbc-wsdl',
+                                     'CEBBCWS.wsdl')
 
     PRODUCTION_SERVICE_URL = 'ceb-bc.csob.cz'
     TEST_SERVICE_URL = 'testceb-bc.csob.cz'
