@@ -4,20 +4,31 @@ Created on 28. 9. 2018
 @author: esner
 '''
 
-import zeep
 import logging.config
-from requests import Session
-from zeep.transports import Transport
-from zeep import helpers
-
 import os
-import requests
 import time
+from os.path import dirname
 from timeit import default_timer as timer
+
+import requests
+import zeep
+from requests import Session
+from requests.adapters import HTTPAdapter
+from requests.packages.urllib3.util.retry import Retry
+from zeep import helpers
+from zeep.transports import Transport
+
+
+class ClientException(Exception):
+    '''
+    Exc
+    '''
 
 
 class Client:
-    _CEB_SERVICE_WSDL = './cebbc-wsdl/CEBBCWS.wsdl'
+    MAX_RETRIES = 10
+    _CEB_SERVICE_WSDL = os.path.join(dirname(dirname(dirname(os.path.realpath(__file__)))), 'cebbc-wsdl',
+                                     'CEBBCWS.wsdl')
 
     PRODUCTION_SERVICE_URL = 'ceb-bc.csob.cz'
     TEST_SERVICE_URL = 'testceb-bc.csob.cz'
@@ -29,7 +40,8 @@ class Client:
     _KEY_TYPE = 'Type'
 
     def __init__(self, contract_number, cert_path, base_url=PRODUCTION_SERVICE_URL,
-                 rate_limit_interval=60, operation_timeout=3600, debug=False):
+                 rate_limit_interval=60, operation_timeout=3600, debug=False, max_retries=MAX_RETRIES,
+                 backoff_factor=0.3):
 
         # final variables setup
         self._rate_limit_interval = rate_limit_interval
@@ -42,6 +54,17 @@ class Client:
         self._set_logger(debug)
 
         session = Session()
+        retry = Retry(
+            total=max_retries,
+            read=max_retries,
+            connect=max_retries,
+            backoff_factor=backoff_factor,
+            status_forcelist=(500, 501, 502, 503, 504),
+            method_whitelist=('GET', 'POST', 'PATCH', 'UPDATE')
+        )
+        adapter = HTTPAdapter(max_retries=retry)
+        session.mount('http://', adapter)
+        session.mount('https://', adapter)
         session.cert = cert_path
         transport = Transport(session=session)
 
@@ -131,12 +154,13 @@ class Client:
                 attempts += 1
                 res = client_call()
                 success = True
-            except zeep.exceptions.Fault as ex:
+            except zeep.exceptions.Error as ex:
                 if attempts <= retries:
                     success = False
                 else:
-                    # TODO: handle exeption properly
-                    raise ex
+                    raise ClientException(ex.message) from ex
+            except requests.exceptions.SSLError as ser:
+                raise ClientException("SSL connection failed, check your certificate / pkey!") from ser
 
         return res
 
@@ -162,7 +186,7 @@ class Client:
         res = self._try_request(lambda: self.client_service.
                                 GetDownloadFileList_v2(ContractNumber=self.contract_number,
                                                        PrevQueryTimestamp=prev_query_timestamp,
-                                                       Filter=filter_), retries=1)
+                                                       Filter=filter_), retries=self.MAX_RETRIES)
 
         file_list = helpers.serialize_object(res)
         return file_list

@@ -1,7 +1,7 @@
 import logging
 import os
 from datetime import datetime
-
+import sys
 import pytz
 from kbc.env_handler import KBCEnvHandler
 
@@ -13,7 +13,7 @@ DEFAULT_TZ = 'Europe/Prague'
 DEFAULT_CERT_FILE_NAME = 'cag.pem'
 DEFAULT_FORMAT = 'TXT'
 # default interval to wait between requests (s)
-DEFAULT_RATELIMIT_INTERVAL = 60
+DEFAULT_RATELIMIT_INTERVAL = 0
 
 PAR_CONTRACTNR = 'contract_nr'
 PAR_SINCE_DATE = 'period_from'
@@ -42,7 +42,6 @@ class Component(KBCEnvHandler):
             debug = True
         if debug:
             logging.getLogger().setLevel(logging.DEBUG)
-        logging.info('Running version %s', APP_VERSION)
         logging.info('Loading configuration...')
         self._debug = debug
 
@@ -115,5 +114,13 @@ class Component(KBCEnvHandler):
         Main entrypoint
 """
 if __name__ == "__main__":
-    comp = Component()
-    comp.run()
+    if len(sys.argv) > 1:
+        debug_arg = sys.argv[1]
+    else:
+        debug_arg = False
+    try:
+        comp = Component(debug_arg)
+        comp.run()
+    except Exception as exc:
+        logging.exception(exc)
+        exit(1)
