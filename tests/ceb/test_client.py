@@ -11,8 +11,9 @@ from ceb.client import Client, ClientException
 class TestClient(unittest.TestCase):
 
     @patch.object(Session, 'post')
-    @patch("ceb.client.Client._CEB_SERVICE_WSDL", dirname(dirname(dirname(os.path.realpath(__file__)))), 'cebbc-wsdl',
-           'CEBBCWS.wsdl')
+    @patch("ceb.client.Client._CEB_SERVICE_WSDL",
+           os.path.join(dirname(dirname(dirname(os.path.realpath(__file__)))), 'cebbc-wsdl',
+                        'CEBBCWS.wsdl'))
     @patch("ceb.client.Client.MAX_RETRIES", 0)
     def test_503_response_invalid_xml_raises_client_exception(self, mock_post):
         mock_resp = Response()
