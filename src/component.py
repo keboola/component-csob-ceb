@@ -42,7 +42,6 @@ class Component(KBCEnvHandler):
             debug = True
         if debug:
             logging.getLogger().setLevel(logging.DEBUG)
-        logging.info('Running version %s', APP_VERSION)
         logging.info('Loading configuration...')
         self._debug = debug
 
