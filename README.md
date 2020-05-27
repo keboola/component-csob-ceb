@@ -2,11 +2,6 @@
 
 Component allowing automated extraction of bank statements (VYPIS) using the [CEB Business Connector API](https://www.csob.cz/portal/firmy/prehled-on-line-kanalu-a-aplikaci/csob-ceb)
 
-
-
-
-
-
 **Table of contents:**  
   
 [TOC]
@@ -26,6 +21,34 @@ Namely you need to:
 
 # Configuration
 
+## CEB Certificate
+
+Retrieve your certificate and private key and paste it here in the `.pem` format.
+
+The certificate should look similarly like this:
+
+```
+-----BEGIN CERTIFICATE-----
+asdasdasdasd
+-----END CERTIFICATE-----
+-----BEGIN PRIVATE KEY-----
+pkeyssssss
+-----END PRIVATE KEY-----
+```
+
+## CSOB contract number
+
+Your CSOB contract number.
+
+## Period from date
+
+Start date.
+
+## Relative period from now
+
+Relative period in format: '5 hours ago', 'yesterday','3 days ago', '4 months ago', '2 years ago', 'today'.
+ 
+**Overrides** the `from` parameter.
 
 
 ## Development
@@ -37,8 +60,6 @@ If required, change local data folder (the `CUSTOM_FOLDER` placeholder) path to 
       - ./:/code
       - ./CUSTOM_FOLDER:/data
 ```
-
-**NOTE**: For generation of the config.json using a friendly GUI form use [this link](http://jeremydorn.com/json-editor/?schema=N4IgLgngDgpiBcID2AjAVjAxmEAacAlmADZyIDCSAdgGYEDmArgE4CGYB1eIzMAjowK8AJggDaIRgGcYzbgGIorKVIDuSZqPwwqwqEgJUc+Ye2VIWmGFO77ixAPoBbJMLgBdfFGZJYzDtYIoNKyQeDQZCBSYMyG9NwcJJEAKqwopKyMAAQhzFlUrE5wXj5+kADymqHwAIwADHUAvviKymoaovCgkLAIUTFxCUSkfanpMJk5MnlKKuqa3DQaTux9s+0LJb6yFVVy8ABMDc0gOnoGRmE9kdGxVPH4iSOIYxnZ0wBuslkAggAKAEksmd9IZjCBvNt/BBKm59gcAKxNLxIezOVxkboRPpURhOFChR7DSJ/VHELIuNzcNxSTCxKAcLiIAE0LIyMBZMBILIAAwAmtYeZyABYwTmxej0b6qAj2LKqVhELJLPKsOUDSWyGDCLJoVBSTncuhUAhSYW4LJIMCi5gymRZJUy9USqWq9Wi3X6rKsXTKwym4VsxiYKwqGiMewQLIS4Uc1g0MCyAB0tlKOxhewQABYEQjtLinOI6rgap4QG4aJliDh4MXkAzOFQbF1TgWHE9AvAJAA5JDcAU2dyNE6mMDmSydrG9RCsZhsCBDJKjNJvLKj8fMUPU6x0ggNpkgAAypo5SFZ66kFk31nlREDMAAHjFWNgDVzxQxXUmsr3EyL2CKWoUtIHIEt6UCQt4BDsGKY5SAA1lIAD0tKisIEY3uyyoaN67rWGKl4TgaVo2nasEeo+WCMIyVC3nKlaytwRAwE4zagCqKw1iA9CxFo4TTsg6BYOCHZ9AAok+bDYNwvACEI2riCABRFAkrAPCAxCCHx1wgGWkE7AQk5KYUmL8TcAz3IuzwgAAImYbJXlY+QmSmJg7vSNF9AAPCgAB8ABK/CCCIXlIX5WR2WODkTs5RTegaSyML6hhZK8EyMK5EJptCsLVPUxyPGpVzYogtyDESS6IJFrDRdenJqZlNK7vuVB9OULVqmu9mEXVY70PF2FJTqKVpZkmX6TlmaHA0yIaVpxUCWVlkVdZaXvLIXx5ElBACGKh4AKoAjZlqstaYoXo5YoABTKNGMDePhRjalkHzQb8gIAJTbrSHmNm1HXkttu1dXBl0Om4RgEHQ3wEEmMDfg+D41AcAC0ADMaMHFmKM1JjaMWqwHyKsQK5iq9NX/AC37JMKprAk2LA3kDjBigQEMcHQmDsI2J2ASDG5WN+LJsrAmBQ4ZwgWmdWQAOR9TLWRKGwRSJnkdMMFQGjauN2W7HCCBozNJw6S2Oh4opgU0LwZoSc+2CpAh3AAlQdIsToYC21JYAO/Bun4L4NFsa2eLtsSzYSAAYhGxBOy7vBFEYaq6cbJX9Hc6miYglvW4GOluT9e6eYgnsvhyvBW9YufYm5lYRlxUf2KmUJ69UWZG8OHdAAA=&value=N4IgrgzgpgTiBcIQBoQGIAOBDCEDuA9jACYJKpQB2xGBAlpQC5koi0A27A+gLYHFQEABlTEsjHATAwAxlAgIA2qEpYegxDlKoJAczJbW7MHVKJWjAJ4YNIAEpQAZjHkALAKIAPRjCwzGACo4ANYgAL4AumFAAA==&theme=bootstrap2&iconlib=fontawesome4&object_layout=normal&show_errors=interaction)
 
 Clone this repository, init the workspace and run the component with following command:
 
