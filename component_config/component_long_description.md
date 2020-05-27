@@ -1,4 +1,4 @@
-Download bank statements from CSOB CEB service. Supports [TXT format](https://www.csob.cz/portal/documents/10710/1927786/ceb-vypisy-format-txt.pdf) bank statements. These need to be enabled in the CEB UI.
+Download bank statements from CSOB CEB  Business Connector service. Supports [TXT format](https://www.csob.cz/portal/documents/10710/1927786/ceb-vypisy-format-txt.pdf) bank statements. These need to be enabled in the CEB UI.
 
 **Prerequisites:**
 

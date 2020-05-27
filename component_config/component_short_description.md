@@ -1,1 +1,1 @@
-Download bank statements from CSOB CEB service.
+Download bank statements from CSOB CEB Business Connector service.
