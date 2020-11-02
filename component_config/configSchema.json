@@ -11,7 +11,7 @@
 		"#cert": {
 			"type": "string",
 			"title": "CEB certificate",
-			"format": "password",
+			"format": "textarea",
 			"description":"Client certificate enabled in CEB portal. It has to be in pem format and contain both private and public key. Json escaped",
 			"propertyOrder": 200
 		},
